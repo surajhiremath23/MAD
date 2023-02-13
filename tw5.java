@@ -1,41 +1,44 @@
-package com.example.notificationdemo1;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-import android.app.NotificationChannel;
+package com.example.exno4;
+ 
+import android.app.Notification;
 import android.app.NotificationManager;
-import android.os.Build;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-import java.nio.channels.Channel;
-public class MainActivity extends AppCompatActivity {
-Button notifyBtn;
-@Override
-protected void onCreate(Bundle savedInstanceState) {
-super.onCreate(savedInstanceState);
-setContentView(R.layout.activity_main);
-notifyBtn = findViewById(R.id.notify_btn);
-if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-NotificationChannel channel = new NotificationChannel("My Notification", "My
-Notification", NotificationManager. IMPORTANCE_DEFAULT);
-NotificationManager manager = getSystemService(NotificationManager.class);
-manager.createNotificationChannel(channel);
+import android.widget.EditText;
+ 
+public class MainActivity extends AppCompatActivity
+{
+    Button notify;
+    EditText e;
+    @Override
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+ 
+        notify= (Button) findViewById(R.id.button);
+        e= (EditText) findViewById(R.id.editText);
+ 
+        notify.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Intent intent = new Intent(MainActivity.this, SecondActivity.class);
+                PendingIntent pending = PendingIntent.getActivity(MainActivity.this, 0, intent, 0);
+                Notification noti = new Notification.Builder(MainActivity.this).setContentTitle("New Message").setContentText(e.getText().toString()).setSmallIcon(R.mipmap.ic_launcher).setContentIntent(pending).build();
+                NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                noti.flags |= Notification.FLAG_AUTO_CANCEL;
+                manager.notify(0, noti);
+            }
+        });
+    }
 }
-notifyBtn.setOnClickListener(new View.OnClickListener() {
-@Override
-public void onClick(View v) {
-NotificationCompat.Builder builder = new
-NotificationCompat.Builder(MainActivity.this, "My Notification");
-builder.setContentTitle("My Notification");
-builder.setContentText("This is the notification you received...");
-builder.setAutoCancel(true);
-builder.setSmallIcon(R.drawable.ic_launcher_background);
-builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
-NotificationManagerCompat managerCompat =
-NotificationManagerCompat.from(MainActivity.this);
-managerCompat.notify(1, builder.build());
-}
-});
-}
-}
+
+
+
+
